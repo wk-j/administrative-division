@@ -3,6 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="source-document.csv" />
+    <EmbeddedResource Include="SourceDocument.csv" />
   </ItemGroup>
 </Project>
