@@ -80,6 +80,27 @@ namespace ThailandAdministrativeDivision {
                 return text;
             }
         }
+
+        internal static Subdistrict CreateProvince(IEnumerable<RawInfo> raws, RawInfo info) => new Subdistrict {
+            Code = info.ChId,
+            ThaiName = info.ChangwatT.TrimReplace("จ."),
+            EnglishName = info.ChangwatE,
+            Districts = raws.Where(x => x.ChId == info.ChId).GroupBy(x => x.AmpId).Select(x => x.First()).Select(x => CreateDistrict(raws, x))
+        };
+
+        internal static District CreateDistrict(IEnumerable<RawInfo> raws, RawInfo info) => new District {
+            Code = info.AmpId,
+            ThaiName = info.AmphoeT.TrimReplace("อ.").TrimReplace("เขต"),
+            EnglishName = info.AmphoeE,
+            Subdistricts = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(x => CreateSubdistrict(raws, x))
+        };
+
+        internal static Province CreateSubdistrict(IEnumerable<RawInfo> raws, RawInfo info) => new Province {
+            Code = info.TaId,
+            ThaiName = info.TambonT.TrimReplace("ต.").TrimReplace("แขวง"),
+            EnglishName = info.TambonE
+        };
+
     }
 
     internal static class StringExtension {
@@ -91,48 +112,27 @@ namespace ThailandAdministrativeDivision {
 
         private Division() { }
 
-        private static IEnumerable<RawInfo> raws = Enumerable.Empty<RawInfo>();
+        static Division division = null;
 
         public IEnumerable<Province> Subdistricts { set; get; }
         public IEnumerable<District> Districts { set; get; }
         public IEnumerable<Subdistrict> Provinces { set; get; }
 
         public static Division Load() {
-
-            if (!raws.Any()) {
+            if (division == null) {
                 var text = Library.LoadCsvDocument();
-                raws = CsvParser.ParseText(text).ToArray();
+                var raws = CsvParser.ParseText(text).ToArray();
+                var provinces = raws.GroupBy(x => x.ChId).Select(x => x.First()).Select(x => Library.CreateProvince(raws, x));
+                var districts = raws.GroupBy(x => x.AmpId).Select(x => x.First()).Select(x => Library.CreateDistrict(raws, x));
+                var subdistricts = raws.GroupBy(x => x.TaId).Select(x => x.First()).Select(x => Library.CreateSubdistrict(raws, x));
+
+                division = new Division {
+                    Districts = districts,
+                    Subdistricts = subdistricts,
+                    Provinces = provinces
+                };
             }
-
-            Subdistrict createProvince(RawInfo info) => new Subdistrict {
-                Code = info.ChId,
-                ThaiName = info.ChangwatT.TrimReplace("จ."),
-                EnglishName = info.ChangwatE,
-                Districts = raws.Where(x => x.ChId == info.ChId).GroupBy(x => x.AmpId).Select(x => x.First()).Select(createDistrict)
-            };
-
-            District createDistrict(RawInfo info) => new District {
-                Code = info.AmpId,
-                ThaiName = info.AmphoeT.TrimReplace("อ.").TrimReplace("เขต"),
-                EnglishName = info.AmphoeE,
-                Subdistricts = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(createSubdistrict)
-            };
-
-            Province createSubdistrict(RawInfo info) => new Province {
-                Code = info.TaId,
-                ThaiName = info.TambonT.TrimReplace("ต.").TrimReplace("แขวง"),
-                EnglishName = info.TambonE
-            };
-
-            var provinces = raws.GroupBy(x => x.ChId).Select(x => x.First()).Select(createProvince);
-            var districts = raws.GroupBy(x => x.AmpId).Select(x => x.First()).Select(createDistrict);
-            var subdistricts = raws.GroupBy(x => x.TaId).Select(x => x.First()).Select(createSubdistrict);
-
-            return new Division {
-                Districts = districts,
-                Subdistricts = subdistricts,
-                Provinces = provinces
-            };
+            return division;
         }
     }
 }
