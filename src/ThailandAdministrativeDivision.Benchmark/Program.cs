@@ -6,13 +6,13 @@ using System.Linq;
 namespace ThailandAdministrativeDivision.Benchmark {
     public class Test {
         [Benchmark]
-        public void LoadChangwats() => Division.Load().Changwats.ToList();
+        public void LoadProvinces() => Division.Load().Provinces.ToList();
 
         [Benchmark]
-        public void LoadAmphoes() => Division.Load().Changwats.SelectMany(x => x.Amphoes).ToList();
+        public void LoadDistricts() => Division.Load().Provinces.SelectMany(x => x.Districts).ToList();
 
         [Benchmark]
-        public void LoadTambons() => Division.Load().Changwats.SelectMany(x => x.Amphoes).SelectMany(x => x.Tambons).ToList();
+        public void LoadSubdistricts() => Division.Load().Provinces.SelectMany(x => x.Districts).SelectMany(x => x.Subdistricts).ToList();
     }
 
     class Program {

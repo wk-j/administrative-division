@@ -20,8 +20,8 @@ namespace ThailandAdministrativeDivision {
         public string LONG { set; get; }
     }
 
-    public class Tambon {
-        internal Tambon() { }
+    public class Province {
+        internal Province() { }
         public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
@@ -29,20 +29,20 @@ namespace ThailandAdministrativeDivision {
         public string Longitude { set; get; }
     }
 
-    public class Amphoe {
-        internal Amphoe() { }
+    public class District {
+        internal District() { }
         public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
-        public IEnumerable<Tambon> Tambons { set; get; }
+        public IEnumerable<Province> Subdistricts { set; get; }
     }
 
-    public class Changwat {
-        internal Changwat() { }
+    public class Subdistrict {
+        internal Subdistrict() { }
         public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
-        public IEnumerable<Amphoe> Amphoes { set; get; }
+        public IEnumerable<District> Districts { set; get; }
     }
 
     internal class CsvParser {
@@ -93,9 +93,9 @@ namespace ThailandAdministrativeDivision {
 
         private static IEnumerable<RawInfo> raws = Enumerable.Empty<RawInfo>();
 
-        public IEnumerable<Tambon> Tambons { set; get; }
-        public IEnumerable<Amphoe> Ampoes { set; get; }
-        public IEnumerable<Changwat> Changwats { set; get; }
+        public IEnumerable<Province> Subdistricts { set; get; }
+        public IEnumerable<District> Districts { set; get; }
+        public IEnumerable<Subdistrict> Provinces { set; get; }
 
         public static Division Load() {
 
@@ -104,34 +104,34 @@ namespace ThailandAdministrativeDivision {
                 raws = CsvParser.ParseText(text).ToArray();
             }
 
-            Changwat createChangwat(RawInfo info) => new Changwat {
+            Subdistrict createProvince(RawInfo info) => new Subdistrict {
                 Code = info.ChId,
                 ThaiName = info.ChangwatT.TrimReplace("จ."),
                 EnglishName = info.ChangwatE,
-                Amphoes = raws.Where(x => x.ChId == info.ChId).GroupBy(x => x.AmpId).Select(x => x.First()).Select(createAmphoe)
+                Districts = raws.Where(x => x.ChId == info.ChId).GroupBy(x => x.AmpId).Select(x => x.First()).Select(createDistrict)
             };
 
-            Amphoe createAmphoe(RawInfo info) => new Amphoe {
+            District createDistrict(RawInfo info) => new District {
                 Code = info.AmpId,
                 ThaiName = info.AmphoeT.TrimReplace("อ."),
                 EnglishName = info.AmphoeE,
-                Tambons = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(createTambon)
+                Subdistricts = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(createSubdistrict)
             };
 
-            Tambon createTambon(RawInfo info) => new Tambon {
+            Province createSubdistrict(RawInfo info) => new Province {
                 Code = info.TaId,
                 ThaiName = info.TambonT.TrimReplace("ต."),
                 EnglishName = info.TambonE
             };
 
-            var changwats = raws.GroupBy(x => x.ChId).Select(x => x.First()).Select(createChangwat);
-            var amphos = raws.GroupBy(x => x.AmpId).Select(x => x.First()).Select(createAmphoe);
-            var tambons = raws.GroupBy(x => x.TaId).Select(x => x.First()).Select(createTambon);
+            var provinces = raws.GroupBy(x => x.ChId).Select(x => x.First()).Select(createProvince);
+            var districts = raws.GroupBy(x => x.AmpId).Select(x => x.First()).Select(createDistrict);
+            var subdistricts = raws.GroupBy(x => x.TaId).Select(x => x.First()).Select(createSubdistrict);
 
             return new Division {
-                Ampoes = amphos,
-                Tambons = tambons,
-                Changwats = changwats
+                Districts = districts,
+                Subdistricts = subdistricts,
+                Provinces = provinces
             };
         }
     }
