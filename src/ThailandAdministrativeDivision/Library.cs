@@ -113,14 +113,14 @@ namespace ThailandAdministrativeDivision {
 
             District createDistrict(RawInfo info) => new District {
                 Code = info.AmpId,
-                ThaiName = info.AmphoeT.TrimReplace("อ."),
+                ThaiName = info.AmphoeT.TrimReplace("อ.").TrimReplace("เขต"),
                 EnglishName = info.AmphoeE,
                 Subdistricts = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(createSubdistrict)
             };
 
             Province createSubdistrict(RawInfo info) => new Province {
                 Code = info.TaId,
-                ThaiName = info.TambonT.TrimReplace("ต."),
+                ThaiName = info.TambonT.TrimReplace("ต.").TrimReplace("แขวง"),
                 EnglishName = info.TambonE
             };
 
