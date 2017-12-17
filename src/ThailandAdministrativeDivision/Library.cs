@@ -22,7 +22,7 @@ namespace ThailandAdministrativeDivision {
 
     public class Tambon {
         internal Tambon() { }
-        public string Id { set; get; }
+        public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
         public string Latitude { set; get; }
@@ -31,7 +31,7 @@ namespace ThailandAdministrativeDivision {
 
     public class Amphoe {
         internal Amphoe() { }
-        public string Id { set; get; }
+        public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
         public IEnumerable<Tambon> Tambons { set; get; }
@@ -39,7 +39,7 @@ namespace ThailandAdministrativeDivision {
 
     public class Changwat {
         internal Changwat() { }
-        public string Id { set; get; }
+        public string Code { set; get; }
         public string ThaiName { set; get; }
         public string EnglishName { set; get; }
         public IEnumerable<Amphoe> Amphoes { set; get; }
@@ -105,21 +105,21 @@ namespace ThailandAdministrativeDivision {
             }
 
             Changwat createChangwat(RawInfo info) => new Changwat {
-                Id = info.ChId,
+                Code = info.ChId,
                 ThaiName = info.ChangwatT.TrimReplace("จ."),
                 EnglishName = info.ChangwatE,
                 Amphoes = raws.Where(x => x.ChId == info.ChId).Select(createAmphoe)
             };
 
             Amphoe createAmphoe(RawInfo info) => new Amphoe {
-                Id = info.AmpId,
+                Code = info.AmpId,
                 ThaiName = info.AmphoeT.TrimReplace("อ."),
                 EnglishName = info.AmphoeE,
                 Tambons = raws.Where(x => x.AmpId == info.AmpId).Select(createTambon)
             };
 
             Tambon createTambon(RawInfo info) => new Tambon {
-                Id = info.TaId,
+                Code = info.TaId,
                 ThaiName = info.TambonT.TrimReplace("ต."),
                 EnglishName = info.TambonE
             };
