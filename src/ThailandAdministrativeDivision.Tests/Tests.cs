@@ -5,24 +5,26 @@ using System.Linq;
 namespace ThailandAdministrativeDivision.Tests {
     public class Tests {
         [Fact]
-        public void ThereAre77Changwats() {
+        public void Changwats() {
             var division = Division.Load();
             var count = division.Changwats.Count();
             Assert.Equal(77, count);
         }
 
         [Fact]
-        public void ThereAre878Amphoes() {
+        public void Amphoes() {
             var division = Division.Load();
             var count = division.Ampoes.Count();
-            // Assert.Equal(878, count);
+            Assert.Equal(928, count);
+            // Expected: 928
+            // Actual:   904
         }
 
         [Fact]
-        public void ThereAre7255Tombons() {
+        public void Tambons() {
             var division = Division.Load();
             var count = division.Tambons.Count();
-            // Assert.Equal(7255, count);
+             Assert.Equal(7364, count);
         }
 
         [Fact]
