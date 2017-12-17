@@ -108,14 +108,14 @@ namespace ThailandAdministrativeDivision {
                 Code = info.ChId,
                 ThaiName = info.ChangwatT.TrimReplace("จ."),
                 EnglishName = info.ChangwatE,
-                Amphoes = raws.Where(x => x.ChId == info.ChId).Select(createAmphoe)
+                Amphoes = raws.Where(x => x.ChId == info.ChId).GroupBy(x => x.AmpId).Select(x => x.First()).Select(createAmphoe)
             };
 
             Amphoe createAmphoe(RawInfo info) => new Amphoe {
                 Code = info.AmpId,
                 ThaiName = info.AmphoeT.TrimReplace("อ."),
                 EnglishName = info.AmphoeE,
-                Tambons = raws.Where(x => x.AmpId == info.AmpId).Select(createTambon)
+                Tambons = raws.Where(x => x.AmpId == info.AmpId).GroupBy(x => x.TaId).Select(x => x.First()).Select(createTambon)
             };
 
             Tambon createTambon(RawInfo info) => new Tambon {
@@ -125,7 +125,7 @@ namespace ThailandAdministrativeDivision {
             };
 
             var changwats = raws.GroupBy(x => x.ChId).Select(x => x.First()).Select(createChangwat);
-            var amphos = raws.GroupBy(x => x.AmphoeE).Select(x => x.First()).Select(createAmphoe);
+            var amphos = raws.GroupBy(x => x.AmpId).Select(x => x.First()).Select(createAmphoe);
             var tambons = raws.GroupBy(x => x.TaId).Select(x => x.First()).Select(createTambon);
 
             return new Division {

@@ -16,15 +16,13 @@ namespace ThailandAdministrativeDivision.Tests {
             var division = Division.Load();
             var count = division.Ampoes.Count();
             Assert.Equal(928, count);
-            // Expected: 928
-            // Actual:   904
         }
 
         [Fact]
         public void Tambons() {
             var division = Division.Load();
             var count = division.Tambons.Count();
-             Assert.Equal(7364, count);
+            Assert.Equal(7364, count);
         }
 
         [Fact]
