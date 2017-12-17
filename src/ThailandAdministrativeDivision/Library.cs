@@ -101,7 +101,7 @@ namespace ThailandAdministrativeDivision {
 
             if (!raws.Any()) {
                 var text = Library.LoadCsvDocument();
-                raws = CsvParser.ParseText(text);
+                raws = CsvParser.ParseText(text).ToArray();
             }
 
             Changwat createChangwat(RawInfo info) => new Changwat {

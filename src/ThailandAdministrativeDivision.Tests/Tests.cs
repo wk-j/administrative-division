@@ -15,14 +15,22 @@ namespace ThailandAdministrativeDivision.Tests {
         public void Amphoes() {
             var division = Division.Load();
             var count = division.Ampoes.Count();
-            Assert.Equal(928, count);
+            var expect = 928;
+            Assert.Equal(expect, count);
+
+            var c2 = division.Changwats.SelectMany(x => x.Amphoes).Count();
+            Assert.Equal(expect, c2);
         }
 
         [Fact]
         public void Tambons() {
             var division = Division.Load();
             var count = division.Tambons.Count();
-            Assert.Equal(7364, count);
+            var expect = 7364;
+            Assert.Equal(expect, count);
+
+            var c2 = division.Changwats.SelectMany(x => x.Amphoes).SelectMany(x => x.Tambons).Count();
+            Assert.Equal(expect, c2);
         }
 
         [Fact]
